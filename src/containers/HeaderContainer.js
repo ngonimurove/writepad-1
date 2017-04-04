@@ -1,11 +1,12 @@
 import React from 'react';
+import Title from '../components/Title';
+import Login from '../components/Login';
 
 const HeaderContainer = () => (
     <nav className="navbar navbar-default">
         <div className="container-fluid">
-            <div className="nav-header">
-                <a className="navbar-brand" href="#">WritePad 1</a>
-            </div>
+            <Title />
+            <Login />
         </div>
     </nav>
     );

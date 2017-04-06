@@ -2,6 +2,8 @@ import React from 'react';
 import HeaderContainer from '../containers/HeaderContainer';
 import NotebookContainer from '../containers/NotebookContainer';
 import { Layout } from 'antd';
+import '../App.css';
+
 
 const App = () => (
     <Layout style={{

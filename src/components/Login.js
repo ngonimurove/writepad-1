@@ -1,5 +1,6 @@
 import React from 'react';
 import { Form, Icon, Input, Button } from 'antd';
+import Signup from './Signup';
 const FormItem = Form.Item;
 
 function hasErrors(fieldsError) {
@@ -51,17 +52,12 @@ class HorizontalLoginForm extends React.Component {
           <Button
             type="primary"
             htmlType="submit"
-            disabled={hasErrors(getFieldsError())}
-          >
+            disabled={hasErrors(getFieldsError())}>
             Log in
           </Button>
         </FormItem>
         <FormItem>
-          <Button
-            type="button"
-          >
-            Signup
-          </Button>
+          <Signup />
         </FormItem>
       </Form>
     );

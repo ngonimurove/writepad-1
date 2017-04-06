@@ -1,12 +1,15 @@
 import React from 'react';
-import Header from '../containers/HeaderContainer';
-import Notebook from '../containers/NotebookContainer';
+import HeaderContainer from '../containers/HeaderContainer';
+import NotebookContainer from '../containers/NotebookContainer';
+import { Layout } from 'antd';
 
 const App = () => (
-  <div>
-    <Header />
-    <Notebook />
-  </div>
+    <Layout style={{
+      height: '100%',
+      margin: '0 auto'}}>
+      <HeaderContainer />
+      <NotebookContainer />
+    </Layout>
 );
 
 export default App;

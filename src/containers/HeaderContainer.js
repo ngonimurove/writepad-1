@@ -1,14 +1,14 @@
 import React from 'react';
 import Title from '../components/Title';
 import Login from '../components/Login';
+import { Layout } from 'antd';
+const { Header } = Layout;
 
 const HeaderContainer = () => (
-    <nav className="navbar navbar-default">
-        <div className="container-fluid">
-            <Title />
-            <Login />
-        </div>
-    </nav>
+    <Header style={{ position: 'fixed', width: '100%', padding: '0', height: 'auto' }}>
+      <Title />
+      <Login />   
+    </Header>
     );
 
 export default HeaderContainer;

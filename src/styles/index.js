@@ -2,14 +2,17 @@ const styles = {
     transparentBg: {
         background: 'transparent'
     },
+    lightGrayBg: {
+        backgroundColor: '#f5f5f5'
+    },
     space: {
         marginTop: '25px'
     },
     marginRight: {
-        'margin-right': '10px'
+        marginRight: '10px'
     },
     marginLeft: {
-        'margin-left': '20px'
+        marginLeft: '20px'
     }
 };
 

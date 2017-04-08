@@ -1,1 +1,28 @@
 @import '~antd/dist/antd.css';
+
+/* Login Form */
+
+.login-form {
+  width: 300px;
+  margin: auto;
+}
+.login-form-forgot {
+  float: right;
+}
+.login-form-button {
+  width: 100%;
+}
+
+/* Signup Form */
+
+.signup-form {
+  width: 300px;
+  margin: auto;
+}
+
+.lsignup-form-button {
+  width: 100%;
+}
+.icp-selector {
+  width: 60px;
+}

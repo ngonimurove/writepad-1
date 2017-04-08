@@ -1,17 +1,8 @@
 import React from 'react';
-import { Form, Icon, Input, Button } from 'antd';
-import Signup from './Signup';
+import { Form, Icon, Input, Button, Checkbox, Layout } from 'antd';
 const FormItem = Form.Item;
 
-function hasErrors(fieldsError) {
-  return Object.keys(fieldsError).some(field => fieldsError[field]);
-}
-
-class HorizontalLoginForm extends React.Component {
-  componentDidMount() {
-    // To disabled submit button at the beginning.
-    this.props.form.validateFields();
-  }
+class NormalLoginForm extends React.Component {
   handleSubmit = (e) => {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
@@ -21,27 +12,18 @@ class HorizontalLoginForm extends React.Component {
     });
   }
   render() {
-    const { getFieldDecorator, getFieldsError, getFieldError, isFieldTouched } = this.props.form;
-
-    // Only show error after a field is touched.
-    const userNameError = isFieldTouched('userName') && getFieldError('userName');
-    const passwordError = isFieldTouched('password') && getFieldError('password');
+    const { getFieldDecorator } = this.props.form;
     return (
-      <Form className="navbar-form navbar-right" layout="inline" onSubmit={this.handleSubmit}>
-        <FormItem
-          validateStatus={userNameError ? 'error' : ''}
-          help={userNameError || ''}
-        >
+        <Layout style={{ marginTop: '80px', width: '100%', padding: '0', bottom: '50px', height: '100%' }}>
+      <Form onSubmit={this.handleSubmit} className="login-form">
+        <FormItem>
           {getFieldDecorator('userName', {
             rules: [{ required: true, message: 'Please input your username!' }],
           })(
             <Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="Username" />
           )}
         </FormItem>
-        <FormItem
-          validateStatus={passwordError ? 'error' : ''}
-          help={passwordError || ''}
-        >
+        <FormItem>
           {getFieldDecorator('password', {
             rules: [{ required: true, message: 'Please input your Password!' }],
           })(
@@ -49,21 +31,24 @@ class HorizontalLoginForm extends React.Component {
           )}
         </FormItem>
         <FormItem>
-          <Button
-            type="primary"
-            htmlType="submit"
-            disabled={hasErrors(getFieldsError())}>
+          {getFieldDecorator('remember', {
+            valuePropName: 'checked',
+            initialValue: true,
+          })(
+            <Checkbox>Remember me</Checkbox>
+          )}
+          <a className="login-form-forgot" href="">Forgot password</a>
+          <Button type="primary" htmlType="submit" className="login-form-button">
             Log in
           </Button>
-        </FormItem>
-        <FormItem>
-          <Signup />
+          Or <a href="">register now!</a>
         </FormItem>
       </Form>
+      </Layout >
     );
   }
 }
 
-const WrappedHorizontalLoginForm = Form.create()(HorizontalLoginForm);
+const WrappedNormalLoginForm = Form.create()(NormalLoginForm);
 
-export default WrappedHorizontalLoginForm;
+export default WrappedNormalLoginForm;

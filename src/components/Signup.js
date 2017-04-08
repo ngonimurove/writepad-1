@@ -1,76 +1,99 @@
 import React from 'react';
-import { Button, Modal, Form, Input } from 'antd';
+import { Layout, Form, Input, Icon, Checkbox, Button } from 'antd';
 const FormItem = Form.Item;
 
-const CreateUser = Form.create()(
-  (props) => {
-    const { visible, onCancel, onCreate, form } = props;
-    const { getFieldDecorator } = form;
-    return (
-      <Modal
-        visible={visible}
-        title="Signup for WritePad"
-        okText="Signup"
-        cancelText="Cancel"
-        onCancel={onCancel}
-        onOk={onCreate}
-      >
-        <Form layout="vertical">
-          <FormItem 
-          label="Email"
-          hasFeedback>
-            {getFieldDecorator('title', {
-              rules: [
-                  { type: 'email', message: 'Please input a valid email address'},
-                  { required: true, message: 'Please input the title of note!' }],
-            })(
-              <Input />
-            )}
-          </FormItem>
-        </Form>
-      </Modal>
-    );
-  }
-);
-
-class SignupButton extends React.Component {
+class RegistrationForm extends React.Component {
   state = {
-    visible: false,
+    confirmDirty: false,
   };
-  showModal = () => {
-    this.setState({ visible: true });
-  }
-  handleCancel = () => {
-    this.setState({ visible: false });
-  }
-  handleCreate = () => {
-    const form = this.form;
-    form.validateFields((err, values) => {
-      if (err) {
-        return;
+  handleSubmit = (e) => {
+    e.preventDefault();
+    this.props.form.validateFieldsAndScroll((err, values) => {
+      if (!err) {
+        console.log('Received values of form: ', values);
       }
-
-      console.log('Received values of form: ', values);
-      form.resetFields();
-      this.setState({ visible: false });
     });
   }
-  saveFormRef = (form) => {
-    this.form = form;
+  handleConfirmBlur = (e) => {
+    const value = e.target.value;
+    this.setState({ confirmDirty: this.state.confirmDirty || !!value });
+  }
+  checkPassword = (rule, value, callback) => {
+    const form = this.props.form;
+    if (value && value !== form.getFieldValue('password')) {
+      callback('Two passwords that you enter is inconsistent!');
+    } else {
+      callback();
+    }
+  }
+  checkConfirm = (rule, value, callback) => {
+    const form = this.props.form;
+    if (value && this.state.confirmDirty) {
+      form.validateFields(['confirm'], { force: true });
+    }
+    callback();
   }
   render() {
+    const { getFieldDecorator } = this.props.form;
+    
     return (
-      <div>
-        <Button type="button" size="large" onClick={this.showModal}>Signup</Button>
-        <CreateUser
-          ref={this.saveFormRef}
-          visible={this.state.visible}
-          onCancel={this.handleCancel}
-          onCreate={this.handleCreate}
-        />
-      </div>
+     <Layout style={{ marginTop: '80px', width: '100%', padding: '0', bottom: '50px', height: '100%' }}>
+      <Form onSubmit={this.handleSubmit} className="signup-form">
+        <FormItem 
+          hasFeedback
+        >
+          {getFieldDecorator('email', {
+            rules: [{
+              type: 'email', message: 'The input is not valid E-mail!',
+            }, {
+              required: true, message: 'Please input your E-mail!',
+            }],
+          })(
+            <Input prefix={<Icon type="email" style={{ fontSize: 13 }} />} placeholder="Email"/>
+          )}
+        </FormItem>
+        <FormItem
+          hasFeedback
+        >
+          {getFieldDecorator('password', {
+            rules: [{
+              required: true, message: 'Please input your password!',
+            }, {
+              validator: this.checkConfirm,
+            }],
+          })(
+            <Input prefix={<Icon type="lock" style={{ fontSize: 13 }} />} type="password" placeholder="Password" />
+          )}
+        </FormItem>
+        <FormItem
+          hasFeedback
+        >
+          {getFieldDecorator('confirm', {
+            rules: [{
+              required: true, message: 'Please confirm your password!',
+            }, {
+              validator: this.checkPassword,
+            }],
+          })(
+            <Input prefix={<Icon type="lock" style={{ fontSize: 13 }} />} type="password" placeholder="Confirm Password" onBlur={this.handleConfirmBlur} />
+          )}
+        </FormItem>
+        <FormItem style={{ marginBottom: 8 }}>
+          {getFieldDecorator('agreement', {
+            valuePropName: 'checked',
+          })(
+            <Checkbox>I have read the <a href="">agreement</a></Checkbox>
+          )}
+        </FormItem>
+        <FormItem>
+          <Button type="primary" htmlType="submit" size="large" className="login-form-button">Signup</Button>
+        </FormItem>
+      </Form>
+      </Layout>
     );
   }
 }
 
-export default SignupButton;
+const WrappedRegistrationForm = Form.create()(RegistrationForm);
+
+export default WrappedRegistrationForm;

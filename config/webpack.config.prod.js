@@ -126,6 +126,16 @@ module.exports = {
         loader: 'babel',
         
       },
+      // Process React with Babel
+      {
+        test: /\.jsx?$/,
+        exclude: /node_modules/,
+        loader: 'babel',
+        query: {
+            presets: ['react'],
+            plugins: ['transform-decorators-legacy']
+        }
+        },
       // The notation here is somewhat confusing.
       // "postcss" loader applies autoprefixer to our CSS.
       // "css" loader resolves paths in CSS and adds assets as dependencies.

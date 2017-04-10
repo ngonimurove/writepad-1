@@ -5,19 +5,20 @@ import AccessContainer from '../containers/AccessContainer';
 import { Layout } from 'antd';
 import '../App.css';
 
+class App extends React.Component {
 
+  render () {
+    const isLoggedIn = false;
 
-const App = () => {
-  const isLoggedIn = true;
-
-  return (
-    <Layout style={{
-      height: '100%',
-      margin: '0 auto'}}>
-      <HeaderContainer />
-      {isLoggedIn ? <NotebookContainer /> : <AccessContainer />}
-    </Layout>
-  )
+    return (
+      <Layout style={{
+        height: '100%',
+        margin: '0 auto'}}>
+        <HeaderContainer />
+        {isLoggedIn ? <NotebookContainer /> : <AccessContainer />}
+      </Layout>
+    )
+  }
 };
 
 export default App;

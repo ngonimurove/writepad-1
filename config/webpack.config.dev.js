@@ -136,6 +136,16 @@ module.exports = {
           cacheDirectory: true
         }
       },
+      // Process React with Babel
+      {
+        test: /\.jsx?$/,
+        exclude: /node_modules/,
+        loader: 'babel',
+        query: {
+            presets: ['react'],
+            plugins: ['transform-decorators-legacy']
+        }
+        },
       // "postcss" loader applies autoprefixer to our CSS.
       // "css" loader resolves paths in CSS and adds assets as dependencies.
       // "style" loader turns CSS into JS modules that inject <style> tags.

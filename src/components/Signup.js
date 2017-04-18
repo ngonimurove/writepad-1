@@ -1,7 +1,9 @@
 import React from 'react';
-import { Layout, Form, Input, Icon, Checkbox, Button } from 'antd';
+import { Layout, Form, Input, Icon, Button } from 'antd';
 import { firebase, helpers } from 'redux-react-firebase';
 import { connect } from 'react-redux';
+import { setContentView } from '../actions';
+
 
 const { dataToJS, pathToJS } = helpers;
 
@@ -11,9 +13,9 @@ const FormItem = Form.Item;
   ['/user']
 ])
 @connect(
-  ({firebase}) => ({
-    user: dataToJS(firebase, '/todos'),
-    authError: pathToJS(firebase, 'authError'),
+  ({ firebase }) => ({
+   user: dataToJS(firebase, '/todos'),
+   authError: pathToJS(firebase, 'authError'),
   })
 )
 class RegistrationForm extends React.Component {
@@ -21,14 +23,14 @@ class RegistrationForm extends React.Component {
     confirmDirty: false,
   };
 
-  updateUser() {
-    const { firebase } = this.props;
-
-    firebase.set('/user', { isRegistered: true })
-  }
-
   render() {
     const {firebase, authError} = this.props
+
+    const navToLogin = (e) => {
+      e.preventDefault();
+
+      this.props.dispatch(setContentView('CONTENT_LOGIN'));
+    }
 
     const handleSubmit = (e) => {
       e.preventDefault();
@@ -43,7 +45,7 @@ class RegistrationForm extends React.Component {
 
           firebase.createUser(credentials, {firstname: values.firstname, lastname: values.lastname});
 
-          this.updateUser();
+          this.props.dispatch(setContentView('CONTENT_LOGIN'));          
         }
       });
     }
@@ -84,7 +86,7 @@ class RegistrationForm extends React.Component {
               required: true, message: 'Please input your first name!',
             }],
           })(
-            <Input prefix={<Icon type="firstname" style={{ fontSize: 13 }} />} placeholder="First Name"/>
+            <Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="First Name"/>
           )}
         </FormItem>
         <FormItem 
@@ -95,7 +97,7 @@ class RegistrationForm extends React.Component {
               required: true, message: 'Please input your last name!',
             }],
           })(
-            <Input prefix={<Icon type="email" style={{ fontSize: 13 }} />} placeholder="Last Name"/>
+            <Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="Last Name"/>
           )}
         </FormItem>
        <FormItem 
@@ -108,7 +110,7 @@ class RegistrationForm extends React.Component {
               required: true, message: 'Please input your E-mail!',
             }],
           })(
-            <Input prefix={<Icon type="email" style={{ fontSize: 13 }} />} placeholder="Email"/>
+            <Input prefix={<Icon type="mail" style={{ fontSize: 13 }} />} placeholder="Email"/>
           )}
         </FormItem>
         <FormItem
@@ -137,16 +139,10 @@ class RegistrationForm extends React.Component {
             <Input prefix={<Icon type="lock" style={{ fontSize: 13 }} />} type="password" placeholder="Confirm Password" onBlur={handleConfirmBlur} />
           )}
         </FormItem>
-        <FormItem style={{ marginBottom: 8 }}>
-          {getFieldDecorator('agreement', {
-            valuePropName: 'checked',
-          })(
-            <Checkbox>I have read the <a href="">agreement</a></Checkbox>
-          )}
-        </FormItem>
         <FormItem>
           <p>{error}</p>
           <Button type="primary" htmlType="submit" size="large" className="login-form-button">Signup</Button>
+          Or <a href="" onClick={navToLogin} >login</a>
         </FormItem>
       </Form>
       </Layout>

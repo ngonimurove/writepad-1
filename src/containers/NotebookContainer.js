@@ -1,6 +1,4 @@
 import React from 'react';
-// import Block from 'react-blocks';
-// import NewNote from '../components/NewNote';
 import Editor from '../components/Editor';
 import { Layout, Menu, Icon, Card } from 'antd';
 const { Sider, Content } = Layout;
@@ -9,7 +7,7 @@ const NotebookContainer = () => (
       <Layout style={{ marginTop: '80px', width: '100%', padding: '0', bottom: '50px', height: '100%' }}>
         <Sider 
         width={200} 
-        style={{ background: '#ececec'}}
+        style={{ background: '#ececec' }}
         collapsed='true'
         >
             <Menu

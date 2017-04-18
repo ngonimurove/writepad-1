@@ -1,9 +1,10 @@
 import {createStore, combineReducers, compose} from 'redux'
 import {reduxReactFirebase, firebaseStateReducer} from 'redux-react-firebase';
-import initialState from './InitialState';
+import contentView from '../reducers/contentView';
 
 const rootReducer = combineReducers({
-  firebase: firebaseStateReducer
+  firebase: firebaseStateReducer,
+  contentView: contentView
 })
 const config = {
   apiKey: 'AIzaSyDvFjjZ94Vxyigjyq6gn4CZmxWeU1qgApQ',
@@ -17,4 +18,5 @@ const createStoreWithFirebase = compose(
 )(createStore)
 
 
-export default createStoreWithFirebase(rootReducer, initialState);
+// export default createStoreWithFirebase(rootReducer, { firebase: { profile: { appState: 'active' } } });
+export default createStoreWithFirebase(rootReducer);

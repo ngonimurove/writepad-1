@@ -1,1 +1,23 @@
-export const InitialState = {}
+const HEADER_LOGGEDIN = 'HEADER_LOGGEDIN';
+const HEADER_LOGGEDOUT = 'HEADER_LOGGEDOUT';
+const CONTENT_LOGIN = 'CONTENT_LOGIN';
+const CONTENT_SIGNUP = 'CONTENT_SIGNUP';
+const CONTENT_NOTEBOOK = 'CONTENT_NOTEBOOK';
+const CONTENT_FOLDER = 'CONTENT_FOLDER';
+const CONTENT_EXPORT = 'CONTENT_EXPORT';
+const CONTENT_NEW_FILE = 'CONTENT_NEW_FILE';
+const CONTENT_SETTINGS = 'CONTENT_SETTINGS';
+
+
+export const InitialState = {
+    appState: {
+        header: {
+            components: [ HEADER_LOGGEDIN, HEADER_LOGGEDOUT ],
+            active: HEADER_LOGGEDOUT
+        },
+        content: {
+            components: [ CONTENT_LOGIN, CONTENT_SIGNUP, CONTENT_NOTEBOOK, CONTENT_FOLDER, CONTENT_EXPORT, CONTENT_NEW_FILE, CONTENT_SETTINGS ],
+            active: CONTENT_LOGIN
+        },
+    }
+}

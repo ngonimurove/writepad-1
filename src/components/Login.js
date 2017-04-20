@@ -56,11 +56,11 @@ class NormalLoginForm extends React.Component {
     const error = (authError) ?
                 authError.toString()
               : (this.state.loading) ?
-                        'loading'
+                        <Icon type="loading" style={{ fontSize: 30 }} />
                       : ''
 
     return (
-        <Layout style={{ marginTop: '80px', width: '100%', padding: '0', bottom: '50px', height: '100%' }}>
+        <Layout style={{ marginTop: '180px', width: '100%', padding: '0', bottom: '50px', height: '100%' }}>
           <Form onSubmit={handleSubmit} className="login-form">
             <FormItem>
               {getFieldDecorator('email', {

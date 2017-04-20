@@ -49,19 +49,39 @@ class HeaderContainer extends React.Component {
       this.props.dispatch(setContentView('CONTENT_LOGIN'));
     }
 
+    const navToProjects = (e) => {
+      e.preventDefault();
+      this.props.dispatch(setContentView('CONTENT_PROJECTS'));
+    }
+
+    const navToNotebook = (e) => {
+      e.preventDefault();
+      this.props.dispatch(setContentView('CONTENT_NOTEBOOK'));
+    }
+
+    const navToExport = (e) => {
+      e.preventDefault();
+      this.props.dispatch(setContentView('CONTENT_EXPORT'));
+    }
+
+    const navToSettings = (e) => {
+      e.preventDefault();
+      this.props.dispatch(setContentView('CONTENT_SETTINGS'));
+    }
+
     return (
-      <Header style={{ position: 'fixed', width: '100%', padding: '0', height: 'auto' }}>
+      <Header style={{ position: 'fixed', zIndex: '1', width: '100%', padding: '0', height: 'auto' }}>
         <Title />
         { this.state.isLoggedIn ? 
         <Menu
             theme="dark"
             mode="horizontal"
             defaultSelectedKeys={['1']}>
-            <Menu.Item key="1" style={IconStyle}><Icon type="folder-open" /></Menu.Item>
-            <Menu.Item key="2" style={IconStyle}><Icon type="file-add" /></Menu.Item>
-            <Menu.Item key="3" style={IconStyle}><Icon type="export" /></Menu.Item>
-            <Menu.Item key="4" style={IconStyleRight} ><Icon type="logout" onClick={handleLogout}/></Menu.Item>
-            <Menu.Item key="5" style={IconStyleRight}><Icon type="setting" /></Menu.Item>
+            <Menu.Item key="1" style={IconStyle}><a onClick={navToProjects}><Icon type="folder-open" /></a></Menu.Item>
+            <Menu.Item key="2" style={IconStyle}><a onClick={navToNotebook}><Icon type="file-text"/></a></Menu.Item>
+            <Menu.Item key="3" style={IconStyle}><a onClick={navToExport}><Icon type="export" /></a></Menu.Item>
+            <Menu.Item key="4" style={IconStyleRight} ><a onClick={handleLogout}><Icon type="logout" /></a></Menu.Item>
+            <Menu.Item key="5" style={IconStyleRight}><a onClick={navToSettings}><Icon type="setting" /></a></Menu.Item>
         </Menu>
         :
         <div></div> }

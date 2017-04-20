@@ -76,7 +76,7 @@ class RegistrationForm extends React.Component {
     const error = (authError) ? authError.toString() : ''
 
     return (
-     <Layout style={{ marginTop: '80px', width: '100%', padding: '0', bottom: '50px', height: '100%' }}>
+     <Layout style={{ marginTop: '180px', width: '100%', padding: '0', bottom: '50px', height: '100%' }}>
       <Form onSubmit={handleSubmit} className="signup-form">
          <FormItem 
           hasFeedback

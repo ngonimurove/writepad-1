@@ -1,10 +1,12 @@
 import {createStore, combineReducers, compose} from 'redux'
 import {reduxReactFirebase, firebaseStateReducer} from 'redux-react-firebase';
 import contentView from '../reducers/contentView';
+import userProfile from '../reducers/userProfile';
 
 const rootReducer = combineReducers({
   firebase: firebaseStateReducer,
-  contentView: contentView
+  contentView: contentView,
+  userProfile: userProfile
 })
 const config = {
   apiKey: 'AIzaSyDvFjjZ94Vxyigjyq6gn4CZmxWeU1qgApQ',

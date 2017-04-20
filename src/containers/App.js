@@ -3,6 +3,9 @@ import HeaderContainer from '../containers/HeaderContainer';
 import NotebookContainer from '../containers/NotebookContainer';
 import Login from '../components/Login';
 import Signup from '../components/Signup';
+import Projects from '../components/Projects';
+import Export from '../components/Export';
+import Settings from '../components/Settings';
 import { Layout } from 'antd';
 import { connect } from 'react-redux';
 import { firebase, helpers } from 'redux-react-firebase';
@@ -13,10 +16,12 @@ import '../App.css';
 
 @firebase()
 @connect(
-  (state) => ({
-   contentView: state.contentView,
-   auth: pathToJS(state.firebase, 'auth')
-  })
+  (state) => {
+    return ({ contentView: state.contentView,
+              userProfile: state.userProfile,
+              auth: pathToJS(state.firebase, 'auth'),
+              profile: pathToJS(state.firebase, 'profile'),
+  })}
 )
 class App extends React.Component {
 
@@ -25,10 +30,11 @@ class App extends React.Component {
     this.state = {
       isLoggedIn: false
     };
+    
+
   }
 
   render () {
-    
     const LoggedOutContentView = ( view ) => {
       
       switch ( view.active) {
@@ -46,8 +52,14 @@ class App extends React.Component {
       switch ( view.active) {
         case 'CONTENT_NOTEBOOK':
           return ( <NotebookContainer /> );
+        case 'CONTENT_PROJECTS':
+          return ( <Projects /> );
+        case 'CONTENT_EXPORT':
+          return ( <Export /> );
+        case 'CONTENT_SETTINGS':
+          return ( <Settings /> );
         default:
-          return ( <NotebookContainer /> )
+          return ( <Projects /> )
       }
     };
 
@@ -56,22 +68,26 @@ class App extends React.Component {
         height: '100%',
         margin: '0 auto'}}>
         <HeaderContainer />
+        <div style={{height: 'auto'}}>
         { this.state.isLoggedIn ? LoggedInContentView(this.props.contentView) : LoggedOutContentView(this.props.contentView) }
+        </div>
       </Layout>
     )
   }
 
   componentDidUpdate(prevProps, prevState) {
 
+    const { auth } = this.props;
+
     if (prevProps !== this.props) {
-      if (this.props.auth) {
-            this.setState({isLoggedIn: true})
+      if (auth) {
+            this.setState({isLoggedIn: true});
       } else {
         this.setState({isLoggedIn: false})
       }
     }
 
-  }
+  };
 };
 
 export default App;

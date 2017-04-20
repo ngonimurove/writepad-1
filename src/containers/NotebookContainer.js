@@ -1,6 +1,6 @@
 import React from 'react';
 import Editor from '../components/Editor';
-import { Layout, Menu, Icon, Card } from 'antd';
+import { Layout, Menu, Icon, Card, Affix } from 'antd';
 const { Sider, Content } = Layout;
 
 const NotebookContainer = () => (
@@ -10,6 +10,7 @@ const NotebookContainer = () => (
         style={{ background: '#ececec' }}
         collapsed='true'
         >
+            <Affix style={{ position: 'fixed', top: 80, left: 0}}>
             <Menu
             theme="light"
             mode="inline"
@@ -25,6 +26,7 @@ const NotebookContainer = () => (
             <Menu.Item key="9"><Icon type="link" /></Menu.Item>
             <Menu.Item key="10"><Icon type="lock" /></Menu.Item>
           </Menu>
+          </Affix>
         </Sider>
         <Content>
             <Card style={{

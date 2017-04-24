@@ -2,6 +2,9 @@ import React from 'react';
 import { Layout, Table, Card, Button, Popconfirm } from 'antd';
 import { connect } from 'react-redux';
 import { firebase, helpers } from 'redux-react-firebase';
+import { setActiveProject, setContentView } from '../actions';
+import { EditorState, convertToRaw } from 'draft-js';
+
 import _ from 'lodash';
 
 const { pathToJS, dataToJS } = helpers;
@@ -35,7 +38,7 @@ class Projects extends React.Component {
                         title: 'Project Name',
                         dataIndex: 'name',
                         key: 'name',
-                        render: text => <a href="#">{text}</a>,
+                        render: (text, record) => <a href="#" onClick={() => this.handleActiveProject(record.key)}>{text}</a>,
                         }, {
                         title: 'Owner',
                         dataIndex: 'owner',
@@ -56,9 +59,15 @@ class Projects extends React.Component {
         }
     };
 
+    handleActiveProject(key) {
+        this.props.dispatch(setActiveProject(key));
+        this.props.dispatch(setContentView('CONTENT_NOTEBOOK'));
+    };
+
     handleNewProject() {
         const { firebase, auth } = this.props;
-        firebase.push('/projects', {owner: auth.uid , name: 'Untitled', content: {block: ['this', 'is', 'that']}});
+        const defaultState = EditorState.createEmpty();
+        firebase.push('/projects', {owner: auth.uid , name: 'Untitled', content: JSON.stringify(convertToRaw(defaultState.getCurrentContent()))});
     };
 
     onDelete(key) {
@@ -92,9 +101,11 @@ class Projects extends React.Component {
                 <Card title="Projects" bordered={false} style={cardStyle} >
                     <Button style={{marginBottom: '15px'}} onClick={() => this.handleNewProject()}>New Project</Button>
                     <Table
+                    bordered
+                    size='middle'
                     locale={{emptyText: 'Create a new project'}} 
                     style={{height: '200px'}} 
-                    pagination={{ pageSize: 8 }} 
+                    pagination={{ pageSize: 10 }} 
                     columns={columns} 
                     dataSource={dataSource} />
                 </Card>

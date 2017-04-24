@@ -24,6 +24,7 @@ const IconStyleRight = {
   (state) => ({
    contentView: state.contentView,
    auth: pathToJS(state.firebase, 'auth'),
+   projectKey: state.activeProject.key
   })
 )
 class HeaderContainer extends React.Component {
@@ -78,7 +79,7 @@ class HeaderContainer extends React.Component {
             mode="horizontal"
             defaultSelectedKeys={['1']}>
             <Menu.Item key="1" style={IconStyle}><a onClick={navToProjects}><Icon type="folder-open" /></a></Menu.Item>
-            <Menu.Item key="2" style={IconStyle}><a onClick={navToNotebook}><Icon type="file-text"/></a></Menu.Item>
+            <Menu.Item key="2" style={IconStyle} disabled={this.props.projectKey ? false : true} ><a onClick={navToNotebook}><Icon type="file-text"/></a></Menu.Item>
             <Menu.Item key="3" style={IconStyle}><a onClick={navToExport}><Icon type="export" /></a></Menu.Item>
             <Menu.Item key="4" style={IconStyleRight} ><a onClick={handleLogout}><Icon type="logout" /></a></Menu.Item>
             <Menu.Item key="5" style={IconStyleRight}><a onClick={navToSettings}><Icon type="setting" /></a></Menu.Item>

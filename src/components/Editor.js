@@ -18,7 +18,7 @@ const { pathToJS, dataToJS, toJS } = helpers;
         return ({
         auth: pathToJS(state.firebase, 'auth'),
         projects: dataToJS(state.firebase, 'projects'),
-        projectKey: state.activeProject.project
+        projectKey: state.activeProject.key
         })}
 )
 class MyEditor extends React.Component {

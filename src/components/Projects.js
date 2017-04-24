@@ -77,15 +77,19 @@ class Projects extends React.Component {
 
     componentWillUpdate(nextProps, nextState) {
         if (nextProps !== this.props) {
-            const { projects } = nextProps;
+            const { projects, auth } = nextProps;
 
             if (projects) {
                 const projectList = _.transform(projects, (result, value, key) => {
                     result.push({ key: key, name: value.name, owner: value.owner })
                 }, []);
 
+                const userProjects = _.filter(projectList, {owner: auth.uid})
+
+                console.log(userProjects);
+
                 this.setState({
-                    dataSource: projectList,
+                    dataSource: userProjects,
                 });
             }
         } 

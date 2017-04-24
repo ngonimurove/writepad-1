@@ -28,6 +28,7 @@ const cardStyle = {
         return ({
         auth: pathToJS(state.firebase, 'auth'),
         projects: dataToJS(state.firebase, 'projects'),
+        users: dataToJS(state.firebase, 'users'),
         })}
 )
 class Projects extends React.Component {
@@ -43,6 +44,7 @@ class Projects extends React.Component {
                         title: 'Owner',
                         dataIndex: 'owner',
                         key: 'owner',
+                        render: (text, record) => <p>{record.ownerFullName}</p>,
                         }, {
                         title: 'Actions',
                         key: 'actions',
@@ -77,16 +79,21 @@ class Projects extends React.Component {
 
     componentWillUpdate(nextProps, nextState) {
         if (nextProps !== this.props) {
-            const { projects, auth } = nextProps;
+            const { projects, auth, users } = nextProps;
+
+            const userList = _.transform(users, (result, value, key) => {
+                    result.push({ uid: key, firstname: value.firstname, lastname: value.lastname })
+                }, []);
+
+            const owner = _.find(userList, {uid: auth.uid});
+            const ownerFullName = owner.firstname + ' ' + owner.lastname;
 
             if (projects) {
                 const projectList = _.transform(projects, (result, value, key) => {
-                    result.push({ key: key, name: value.name, owner: value.owner })
+                    result.push({ key: key, name: value.name, owner: value.owner, ownerFullName: ownerFullName })
                 }, []);
 
                 const userProjects = _.filter(projectList, {owner: auth.uid})
-
-                console.log(userProjects);
 
                 this.setState({
                     dataSource: userProjects,

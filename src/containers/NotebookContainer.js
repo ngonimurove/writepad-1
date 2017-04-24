@@ -1,6 +1,6 @@
 import React from 'react';
 import Editor from '../components/Editor';
-import { Layout, Menu, Icon, Card, Affix } from 'antd';
+import { Layout, Menu, Icon, Affix } from 'antd';
 const { Sider, Content } = Layout;
 
 const NotebookContainer = () => (
@@ -29,15 +29,8 @@ const NotebookContainer = () => (
           </Affix>
         </Sider>
         <Content>
-            <Card style={{
-                margin: '0 auto', 
-                width: '80%', 
-                backgroundColor: '#fff', 
-                border: '1px solid #ccc',
-                cursor: 'text' }}
-                bodyStyle={{ padding: '5px 10px' }}>
-                <Editor style={{height: '100%'}}/>
-            </Card>
+        <Editor style={{height: '100%'}}/>
+
         </Content>
       </Layout>
     );

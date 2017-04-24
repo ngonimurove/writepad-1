@@ -2,6 +2,8 @@ import React from 'react';
 import {Editor, EditorState, convertToRaw, convertFromRaw } from 'draft-js';
 import { connect } from 'react-redux';
 import { firebase, helpers } from 'redux-react-firebase';
+import { Card } from 'antd';
+
 import _ from 'lodash';
 
 const { pathToJS, dataToJS, toJS } = helpers;
@@ -41,7 +43,23 @@ class MyEditor extends React.Component {
   render() {
     return (
       <div onClick={this.focus}>
-        {this.props.projects ? <Editor editorState={this.state.editorState} onChange={this.onChange} ref='editor' /> : <div></div>}
+        {this.props.projects ? 
+            <Card style={{
+                margin: '0 auto', 
+                width: '80%', 
+                backgroundColor: '#fff', 
+                border: '1px solid #ccc',
+                cursor: 'text' }}
+                bodyStyle={{ padding: '5px 10px' }}>
+              <Editor placeholder="Type here..." editorState={this.state.editorState} onChange={this.onChange} ref='editor' />
+            </Card>
+           : <div style={{
+                margin: '0 auto', 
+                width: '80%',
+                border: '1px solid #ccc',
+                padding: '5px 10px'}}>
+                  Go to your folder to create a new project.
+                </div>}
       </div>
     );
   };

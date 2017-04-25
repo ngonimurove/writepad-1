@@ -40,7 +40,6 @@ class HeaderContainer extends React.Component {
 
     const handleLogout = (e) => {
       e.preventDefault();
-      
       firebase.logout();
       
       this.setState({

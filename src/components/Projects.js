@@ -81,23 +81,27 @@ class Projects extends React.Component {
         if (nextProps !== this.props) {
             const { projects, auth, users } = nextProps;
 
-            const userList = _.transform(users, (result, value, key) => {
-                    result.push({ uid: key, firstname: value.firstname, lastname: value.lastname })
-                }, []);
+           if (auth && projects) {
+                
 
-            const owner = _.find(userList, {uid: auth.uid});
-            const ownerFullName = owner.firstname + ' ' + owner.lastname;
+                const userList = _.transform(users, (result, value, key) => {
+                        result.push({ uid: key, firstname: value.firstname, lastname: value.lastname })
+                    }, []);
 
-            if (projects) {
-                const projectList = _.transform(projects, (result, value, key) => {
-                    result.push({ key: key, name: value.name, owner: value.owner, ownerFullName: ownerFullName })
-                }, []);
+                const owner = _.find(userList, {uid: auth.uid});
+                const ownerFullName = owner.firstname + ' ' + owner.lastname;
 
-                const userProjects = _.filter(projectList, {owner: auth.uid})
+                if (projects) {
+                    const projectList = _.transform(projects, (result, value, key) => {
+                        result.push({ key: key, name: value.name, owner: value.owner, ownerFullName: ownerFullName })
+                    }, []);
 
-                this.setState({
-                    dataSource: userProjects,
-                });
+                    const userProjects = _.filter(projectList, {owner: auth.uid})
+
+                    this.setState({
+                        dataSource: userProjects,
+                    });
+                }
             }
         } 
     };
@@ -110,7 +114,7 @@ class Projects extends React.Component {
         return (
             <Layout style={{ marginTop: '80px', width: '100%', padding: '0', bottom: '50px', height: 'auto' }}>
                 <Card title="Projects" bordered={false} style={cardStyle} >
-                    <Button style={{marginBottom: '15px'}} onClick={() => this.handleNewProject()}>New Project</Button>
+                    {this.props.auth ? <Button style={{marginBottom: '15px'}} onClick={() => this.handleNewProject()}>New Project</Button> : ''}
                     <Table
                     bordered
                     size='middle'

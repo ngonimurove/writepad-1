@@ -2,11 +2,17 @@ import React from 'react';
 import {Editor, EditorState, convertToRaw, convertFromRaw } from 'draft-js';
 import { connect } from 'react-redux';
 import { firebase, helpers } from 'redux-react-firebase';
-import { Card } from 'antd';
 
 import _ from 'lodash';
 
 const { pathToJS, dataToJS, toJS } = helpers;
+
+function myBlockStyleFn(contentBlock) {
+  const type = contentBlock.getType();
+  if (type === 'unstyled') {
+    return 'custom-card custom-card-body custom-card-bordered';
+  }
+};
 
 @firebase((props) => {
     return ([
@@ -44,15 +50,12 @@ class MyEditor extends React.Component {
     return (
       <div onClick={this.focus}>
         {this.props.projects ? 
-            <Card style={{
-                margin: '0 auto', 
-                width: '80%', 
-                backgroundColor: '#fff', 
-                border: '1px solid #ccc',
-                cursor: 'text' }}
-                bodyStyle={{ padding: '5px 10px' }}>
-              <Editor placeholder="Type here..." editorState={this.state.editorState} onChange={this.onChange} ref='editor' />
-            </Card>
+              <Editor 
+              blockStyleFn={myBlockStyleFn} 
+              placeholder="Type here..." 
+              editorState={this.state.editorState} 
+              onChange={this.onChange} 
+              ref='editor' />
            : <div style={{
                 margin: '0 auto', 
                 width: '80%',
@@ -83,17 +86,18 @@ class MyEditor extends React.Component {
                     }, []);
 
               const activeProject = _.find(projectList, {key: projectKey});
-              const newContentState = convertFromRaw(JSON.parse(activeProject.content));
-              const newEditorState = EditorState.push(this.state.editorState, newContentState);
-
-              const selection = this.selectionPicker(activeProject.selections, auth.uid);
-
-              const previousSelectionState = newEditorState.getSelection();
-              const selectionState = previousSelectionState.merge(selection);
-
-              const editorStateWithSelection = EditorState.acceptSelection(newEditorState, selectionState);
-
               if (activeProject) {
+                const newContentState = convertFromRaw(JSON.parse(activeProject.content));
+                const newEditorState = EditorState.push(this.state.editorState, newContentState);
+
+                const selection = this.selectionPicker(activeProject.selections, auth.uid);
+
+                const previousSelectionState = newEditorState.getSelection();
+                const selectionState = previousSelectionState.merge(selection);
+
+                const editorStateWithSelection = EditorState.acceptSelection(newEditorState, selectionState);
+
+                
                 this.setState({
                   editorState: editorStateWithSelection,
                   activeProject: activeProject,

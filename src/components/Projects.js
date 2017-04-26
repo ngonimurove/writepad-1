@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layout, Table, Card, Button, Popconfirm } from 'antd';
+import { Layout, Table, Card, Button, Popconfirm, Input, Icon } from 'antd';
 import { connect } from 'react-redux';
 import { firebase, helpers } from 'redux-react-firebase';
 import { setActiveProject, setContentView } from '../actions';
@@ -16,6 +16,62 @@ const cardStyle = {
     backgroundColor: '#fff', 
     border: '1px solid #ccc',
 };
+
+class EditableCell extends React.Component {
+    state = {
+        value: this.props.value,
+        key: this.props.key,
+        editable: false,
+    };
+    
+    handleChange = (e) => {
+        const value = e.target.value;
+        this.setState({ value });
+    };
+
+    check = () => {
+        this.setState({ editable: false });
+        if (this.props.onChange) {
+        this.props.onChange(this.state.value);
+        }
+    };
+
+    edit = () => {
+        this.setState({ editable: true });
+    }; 
+
+    render() {
+        const { value, editable } = this.state;
+        return (
+        <div className="editable-cell">
+            {
+            editable ?
+                <div className="editable-cell-input-wrapper">
+                <Input
+                    value={value}
+                    onChange={this.handleChange}
+                    onPressEnter={this.check}
+                />
+                <Icon
+                    type="check"
+                    className="editable-cell-icon-check"
+                    onClick={this.check}
+                />
+                </div>
+                :
+                <div className="editable-cell-text-wrapper">
+                {this.props.children}
+                <Icon
+                    type="edit"
+                    className="editable-cell-icon"
+                    onClick={this.edit}
+                />
+                </div>
+            }
+        </div>
+        );
+    }
+}
 
 @firebase((props) => {
     return ([
@@ -39,7 +95,15 @@ class Projects extends React.Component {
                         title: 'Project Name',
                         dataIndex: 'name',
                         key: 'name',
-                        render: (text, record) => <a href="#" onClick={() => this.handleActiveProject(record.key)}>{text}</a>,
+                        width: '30%',
+                        //render: (text, record) => <a href="#" onClick={() => this.handleActiveProject(record.key)}>{text}</a>,
+                        render: (text, record, index) => (
+                            <EditableCell
+                            value={text}
+                            onChange={this.onCellChange(record.key, 'name')}>
+                                <a href="#" onClick={() => this.handleActiveProject(record.key)}>{text}</a>
+                            </EditableCell>
+                        ),
                         }, {
                         title: 'Owner',
                         dataIndex: 'owner',
@@ -70,6 +134,13 @@ class Projects extends React.Component {
         const { firebase, auth } = this.props;
         const defaultState = EditorState.createEmpty();
         firebase.push('/projects', {owner: auth.uid , name: 'Untitled', content: JSON.stringify(convertToRaw(defaultState.getCurrentContent()))});
+    };
+
+    onCellChange = (key) => {
+        const { firebase } = this.props;
+        return (value) => {
+            firebase.set(`/projects/${key}/name`, value);
+        };
     };
 
     onDelete(key) {

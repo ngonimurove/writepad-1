@@ -52,7 +52,6 @@ class MyEditor extends React.Component {
         {this.props.projects ? 
               <Editor 
               blockStyleFn={myBlockStyleFn} 
-              placeholder="Type here..." 
               editorState={this.state.editorState} 
               onChange={this.onChange} 
               ref='editor' />

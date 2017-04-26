@@ -55,13 +55,7 @@ class MyEditor extends React.Component {
               editorState={this.state.editorState} 
               onChange={this.onChange} 
               ref='editor' />
-           : <div style={{
-                margin: '0 auto', 
-                width: '80%',
-                border: '1px solid #ccc',
-                padding: '5px 10px'}}>
-                  Go to your folder to create a new project.
-                </div>}
+           : <div></div>}
       </div>
     );
   };

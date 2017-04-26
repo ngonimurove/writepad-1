@@ -76,15 +76,20 @@ class EditableCell extends React.Component {
 @firebase((props) => {
     return ([
         'users',
-        ['projects']
+        ['projects'],
+        ['.info']
     ]);
 })
 @connect(
     (state, props) => {
+
+        const info = dataToJS(state.firebase, '.info');
+
         return ({
         auth: pathToJS(state.firebase, 'auth'),
         projects: dataToJS(state.firebase, 'projects'),
         users: dataToJS(state.firebase, 'users'),
+        online: info.connected,
         })}
 )
 class Projects extends React.Component {
@@ -185,15 +190,21 @@ class Projects extends React.Component {
         return (
             <Layout style={{ marginTop: '80px', width: '100%', padding: '0', bottom: '50px', height: 'auto' }}>
                 <Card title="Projects" bordered={false} style={cardStyle} >
-                    {this.props.auth ? <Button style={{marginBottom: '15px'}} onClick={() => this.handleNewProject()}>New Project</Button> : ''}
-                    <Table
-                    bordered
-                    size='middle'
-                    locale={{emptyText: 'Create a new project'}} 
-                    style={{height: '200px'}} 
-                    pagination={{ pageSize: 10 }} 
-                    columns={columns} 
-                    dataSource={dataSource} />
+                    {this.props.projects ? 
+                        <div>
+                            <Button style={{marginBottom: '15px'}} onClick={() => this.handleNewProject()}>
+                                New Project
+                            </Button> 
+                            <Table
+                            bordered
+                            size='middle'
+                            locale={{emptyText: 'Create a new project'}} 
+                            style={{height: '200px'}} 
+                            pagination={{ pageSize: 10 }} 
+                            columns={columns} 
+                            dataSource={dataSource} />
+                        </div> :
+                        <Icon type="loading" />}
                 </Card>
             </Layout>)
     };

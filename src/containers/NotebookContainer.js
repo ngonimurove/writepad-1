@@ -31,7 +31,7 @@ class NotebookContainer extends React.Component {
         constructor(props) {
           super(props);
           this.state = {
-              projectName: 'Loading...',
+              projectName: <Icon type="loading" />,
               online: false,
           }
       };
@@ -94,7 +94,6 @@ class NotebookContainer extends React.Component {
 
               const activeProject = _.find(projectList, {key: projectKey});
               if (activeProject) {
-                console.log(nextProps);
                 if (nextProps.online) {
                   Firebase.database().ref(`projects/${projectKey}/presence/${auth.uid}`).onDisconnect().remove()
                   Firebase.database().ref(`projects/${projectKey}/selections/${auth.uid}`).onDisconnect().remove()

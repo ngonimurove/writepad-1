@@ -101,7 +101,6 @@ class Projects extends React.Component {
                         dataIndex: 'name',
                         key: 'name',
                         width: '30%',
-                        //render: (text, record) => <a href="#" onClick={() => this.handleActiveProject(record.key)}>{text}</a>,
                         render: (text, record, index) => (
                             <EditableCell
                             value={text}
@@ -190,21 +189,24 @@ class Projects extends React.Component {
         return (
             <Layout style={{ marginTop: '80px', width: '100%', padding: '0', bottom: '50px', height: 'auto' }}>
                 <Card title="Projects" bordered={false} style={cardStyle} >
-                    {this.props.projects ? 
                         <div>
+                            {this.props.online ?
                             <Button style={{marginBottom: '15px'}} onClick={() => this.handleNewProject()}>
                                 New Project
-                            </Button> 
-                            <Table
-                            bordered
-                            size='middle'
-                            locale={{emptyText: 'Create a new project'}} 
-                            style={{height: '200px'}} 
-                            pagination={{ pageSize: 10 }} 
-                            columns={columns} 
-                            dataSource={dataSource} />
-                        </div> :
-                        <Icon type="loading" />}
+                            </Button> :
+                            ''
+                            }
+                            {typeof this.props.projects !== 'undefined' ? 
+                                <Table
+                                bordered
+                                size='middle'
+                                locale={{emptyText: 'Create a new project'}} 
+                                style={{height: '200px'}} 
+                                pagination={{ pageSize: 10 }} 
+                                columns={columns} 
+                                dataSource={dataSource} /> :
+                                <div><Icon type="loading" /></div>}
+                        </div>
                 </Card>
             </Layout>)
     };

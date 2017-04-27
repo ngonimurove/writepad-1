@@ -20,13 +20,20 @@
   margin: auto;
 }
 
-.lsignup-form-button {
+.signup-form-button {
   width: 100%;
 }
-.icp-selector {
-  width: 60px;
+
+/* Profile Form */
+
+.profile-form {
+  width: 600px;
+  margin-right: auto;
 }
 
+.profile-form-button {
+  width: 100%;
+}
 
 /* Editor Cards */
 .custom-card {
@@ -135,4 +142,29 @@
 
 .editable-add-btn {
   margin-bottom: 8px;
+}
+
+/* Settings Tabs */
+#components-tabs-demo-card-top .code-box-demo {
+  background: #ececec;
+  overflow: hidden;
+  padding: 24px;
+}
+
+.card-container > .ant-tabs-card > .ant-tabs-content {
+  height: auto;
+  margin-top: -16px;
+}
+
+.card-container > .ant-tabs-card > .ant-tabs-content > .ant-tabs-tabpane {
+  background: #fff;
+  padding: 16px;
+}
+
+.card-container > .ant-tabs-card > .ant-tabs-bar .ant-tabs-tab {
+  border-color: transparent;
+}
+
+.card-container > .ant-tabs-card > .ant-tabs-bar .ant-tabs-tab-active {
+  border-color: #ececec;
 }

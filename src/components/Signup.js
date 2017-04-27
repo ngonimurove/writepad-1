@@ -10,11 +10,11 @@ const { dataToJS, pathToJS } = helpers;
 const FormItem = Form.Item;
 
 @firebase([
-  ['/user']
+  ['users']
 ])
 @connect(
   ({ firebase }) => ({
-   user: dataToJS(firebase, '/todos'),
+   users: dataToJS(firebase, 'users'),
    authError: pathToJS(firebase, 'authError'),
   })
 )
@@ -43,7 +43,7 @@ class RegistrationForm extends React.Component {
           }
           console.log('Received values of form: ', credentials);
 
-          firebase.createUser(credentials, {firstname: values.firstname, lastname: values.lastname});
+          firebase.createUser(credentials, {firstname: values.firstname, lastname: values.lastname, email:values.email});
 
           this.props.dispatch(setContentView('CONTENT_LOGIN'));          
         }
@@ -73,7 +73,7 @@ class RegistrationForm extends React.Component {
 
     const { getFieldDecorator } = this.props.form;
 
-    const error = (authError) ? authError.toString() : ''
+    const error = (authError) ? authError.toString() : '';
 
     return (
      <Layout style={{ marginTop: '180px', width: '100%', padding: '0', bottom: '50px', height: '100%' }}>
@@ -141,7 +141,7 @@ class RegistrationForm extends React.Component {
         </FormItem>
         <FormItem>
           <p>{error}</p>
-          <Button type="primary" htmlType="submit" size="large" className="login-form-button">Signup</Button>
+          <Button type="primary" htmlType="submit" size="large" className="signup-form-button">Signup</Button>
           Or <a href="" onClick={navToLogin} >login</a>
         </FormItem>
       </Form>

@@ -62,15 +62,13 @@ class NotebookContainer extends React.Component {
                 mode="inline"
                 >
                 <Menu.Item key="1"><Icon type="edit" /></Menu.Item>
-                <Menu.Item key="2"><Icon type="arrow-left" /></Menu.Item>
-                <Menu.Item key="3"><Icon type="arrow-right" /></Menu.Item>
-                <Menu.Item key="4"><Icon type="arrow-up" /></Menu.Item>
-                <Menu.Item key="5"><Icon type="arrow-down" /></Menu.Item>
-                <Menu.Item key="6"><Icon type="switcher" /></Menu.Item>
-                <Menu.Item key="7"><Icon type="copy" /></Menu.Item>
-                <Menu.Item key="8"><Icon type="eye" /></Menu.Item>
-                <Menu.Item key="9"><Icon type="link" /></Menu.Item>
-                <Menu.Item key="10"><Icon type="lock" /></Menu.Item>
+                <Menu.Item key="2"><Icon type="arrow-up" /></Menu.Item>
+                <Menu.Item key="3"><Icon type="arrow-down" /></Menu.Item>
+                <Menu.Item key="4"><Icon type="switcher" /></Menu.Item>
+                <Menu.Item key="5"><Icon type="copy" /></Menu.Item>
+                <Menu.Item key="6"><Icon type="eye" /></Menu.Item>
+                <Menu.Item key="7"><Icon type="link" /></Menu.Item>
+                <Menu.Item key="8"><Icon type="lock" /></Menu.Item>
               </Menu>
               </Affix>
             </Sider>

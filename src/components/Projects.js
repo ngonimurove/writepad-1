@@ -73,25 +73,45 @@ class EditableCell extends React.Component {
     }
 }
 
-@firebase((props) => {
-    return ([
-        'users',
-        ['projects'],
-        ['.info']
-    ]);
-})
+
 @connect(
     (state, props) => {
-
+        const auth = pathToJS(state.firebase, 'auth');
         const info = dataToJS(state.firebase, '.info');
+        const user = pathToJS(state.firebase, 'profile');
+
+        const ownedProjects = user ? user.ownedProjects : {};
+
+        const userProjects = _.map(ownedProjects, (project) => {
+            const projectDetails = dataToJS(state.firebase, `projects/${project.key}`);
+            return _.merge(projectDetails, { key: project.key })
+            //return projectDetails;
+        });
 
         return ({
-        auth: pathToJS(state.firebase, 'auth'),
+        auth: auth,
         projects: dataToJS(state.firebase, 'projects'),
+        userProjects: userProjects,
+        user: user,
         users: dataToJS(state.firebase, 'users'),
-        online: info.connected,
+        online: info ? info.connected : false,
         })}
 )
+@firebase(
+    (props) => {
+
+        const { user } = props;
+
+        const ownedProjects = user ? user.ownedProjects : {};
+
+        const userProjects = _.map(ownedProjects, (project) => {
+            return `projects/${project.key}`;
+        });
+
+        const listeners = _.concat(['users', '.info'], userProjects);
+
+        return (listeners);
+})
 class Projects extends React.Component {
     constructor(props) {
         super(props);
@@ -137,7 +157,15 @@ class Projects extends React.Component {
     handleNewProject() {
         const { firebase, auth } = this.props;
         const defaultState = EditorState.createEmpty();
-        firebase.push('/projects', {owner: auth.uid , name: 'Untitled', content: JSON.stringify(convertToRaw(defaultState.getCurrentContent()))});
+        const projectDetails = {
+            owner: auth.uid , 
+            name: 'Untitled', 
+            content: JSON.stringify(convertToRaw(defaultState.getCurrentContent()))
+        };
+
+        firebase.push('/projects', projectDetails).then((input) => {firebase.set(`/users/${auth.uid}/ownedProjects/${input.key}`, {key: input.key})});
+        ;
+        
     };
 
     onCellChange = (key) => {
@@ -148,15 +176,15 @@ class Projects extends React.Component {
     };
 
     onDelete(key) {
-        const { firebase } = this.props;
-        firebase.remove(`/projects/${key}`);
+        const { firebase, auth } = this.props;
+        firebase.remove(`/projects/${key}`).then(firebase.remove(`/users/${auth.uid}/ownedProjects/${key}`));
     };
 
     componentWillUpdate(nextProps, nextState) {
         if (nextProps !== this.props) {
-            const { projects, auth, users } = nextProps;
+            const { auth, users, userProjects } = nextProps;
 
-           if (auth && projects) {
+           if (auth && users) {
                 
 
                 const userList = _.transform(users, (result, value, key) => {
@@ -166,15 +194,18 @@ class Projects extends React.Component {
                 const owner = _.find(userList, {uid: auth.uid});
                 const ownerFullName = owner.firstname + ' ' + owner.lastname;
 
-                if (projects) {
-                    const projectList = _.transform(projects, (result, value, key) => {
-                        result.push({ key: key, name: value.name, owner: value.owner, ownerFullName: ownerFullName })
-                    }, []);
-
-                    const userProjects = _.filter(projectList, {owner: auth.uid})
+                if (userProjects) {
+                    const projectData = _.map(userProjects, (project) => {
+                        return ({
+                            key: project.key,
+                            name: project.name,
+                            owner: project.owner,
+                            ownerFullName: ownerFullName,
+                        })
+                    });
 
                     this.setState({
-                        dataSource: userProjects,
+                        dataSource: projectData,
                     });
                 }
             }
@@ -196,7 +227,7 @@ class Projects extends React.Component {
                             </Button> :
                             ''
                             }
-                            {typeof this.props.projects !== 'undefined' ? 
+                            {typeof this.props.userProjects !== 'undefined' ? 
                                 <Table
                                 bordered
                                 size='middle'

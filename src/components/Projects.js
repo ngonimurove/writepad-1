@@ -32,6 +32,7 @@ class EditableCell extends React.Component {
     check = () => {
         this.setState({ editable: false });
         if (this.props.onChange) {
+        console.log(this.state.value);
         this.props.onChange(this.state.value);
         }
     };
@@ -80,17 +81,15 @@ class EditableCell extends React.Component {
         const info = dataToJS(state.firebase, '.info');
         const user = pathToJS(state.firebase, 'profile');
 
-        const ownedProjects = user ? user.ownedProjects : {};
+        const projects = user ? user.projects : {};
 
-        const userProjects = _.map(ownedProjects, (project) => {
+        const userProjects = _.map(projects, (project) => {
             const projectDetails = dataToJS(state.firebase, `projects/${project.key}`);
             return _.merge(projectDetails, { key: project.key })
-            //return projectDetails;
         });
 
         return ({
         auth: auth,
-        projects: dataToJS(state.firebase, 'projects'),
         userProjects: userProjects,
         user: user,
         users: dataToJS(state.firebase, 'users'),
@@ -102,9 +101,9 @@ class EditableCell extends React.Component {
 
         const { user } = props;
 
-        const ownedProjects = user ? user.ownedProjects : {};
+        const projects = user ? user.projects : {};
 
-        const userProjects = _.map(ownedProjects, (project) => {
+        const userProjects = _.map(projects, (project) => {
             return `projects/${project.key}`;
         });
 
@@ -123,7 +122,7 @@ class Projects extends React.Component {
                         width: '30%',
                         render: (text, record, index) => (
                             <EditableCell
-                            value={text}
+                            value={record.name}
                             onChange={this.onCellChange(record.key, 'name')}>
                                 <a href="#" onClick={() => this.handleActiveProject(record.key)}>{text}</a>
                             </EditableCell>
@@ -160,10 +159,11 @@ class Projects extends React.Component {
         const projectDetails = {
             owner: auth.uid , 
             name: 'Untitled', 
+            time: Date.now(),
             content: JSON.stringify(convertToRaw(defaultState.getCurrentContent()))
         };
 
-        firebase.push('/projects', projectDetails).then((input) => {firebase.set(`/users/${auth.uid}/ownedProjects/${input.key}`, {key: input.key})});
+        firebase.push('/projects', projectDetails).then((input) => {firebase.set(`/users/${auth.uid}/projects/${input.key}`, {key: input.key})});
         ;
         
     };
@@ -177,7 +177,7 @@ class Projects extends React.Component {
 
     onDelete(key) {
         const { firebase, auth } = this.props;
-        firebase.remove(`/projects/${key}`).then(firebase.remove(`/users/${auth.uid}/ownedProjects/${key}`));
+        firebase.remove(`/projects/${key}`).then(firebase.remove(`/users/${auth.uid}/projects/${key}`));
     };
 
     componentWillUpdate(nextProps, nextState) {

@@ -1,7 +1,9 @@
 import React from 'react';
-import {Editor, EditorState, convertToRaw, convertFromRaw } from 'draft-js';
+import {Editor, EditorState, convertToRaw, convertFromRaw, RichUtils } from 'draft-js';
 import { connect } from 'react-redux';
 import { firebase, helpers } from 'redux-react-firebase';
+import diff from 'deep-diff';
+import Immutable from 'immutable';
 
 import _ from 'lodash';
 
@@ -14,47 +16,91 @@ function myBlockStyleFn(contentBlock) {
   }
 };
 
-@firebase((props) => {
-    return ([
-        ['projects'],
-    ]);
-})
 @connect(
     (state, props) => {
+
+        const info = dataToJS(state.firebase, '.info');
+        const projectKey = state.activeProject.key;
+        const projectPath = 'projects/' + projectKey;
+
         return ({
         auth: pathToJS(state.firebase, 'auth'),
-        projects: dataToJS(state.firebase, 'projects'),
-        projectKey: state.activeProject.key
+        profile: pathToJS(state.firebase, 'profile'),
+        activeProject: dataToJS(state.firebase, projectPath),
+        projectKey: projectKey,
+        online: info ? info.connected : false,
         })}
 )
+@firebase((props) => {
+
+    const projectPath = 'projects/' + props.projectKey;
+
+    return ([
+        [projectPath],
+        ['.info'],
+    ]);
+})
 class MyEditor extends React.Component {
   constructor(props) {
 
     super(props);
     
-    const { firebase, projectKey, auth } = this.props;
+    const { firebase, projectKey, auth, activeProject } = this.props;
 
     this.focus = () => this.refs.editor.focus();
 
-    this.state = {editorState: EditorState.createEmpty(),
-                  activeProject: {}};
+    this.state = {
+      editorState: EditorState.createEmpty(),
+      rehydrate: true,
+    };
 
     this.onChange = (editorState) => {
-      const selectionState = editorState.getSelection();
+
+      const previousEditorState = this.state.editorState;
+      const selectionState = toJS(editorState.getSelection());
+      var previousContent = convertToRaw(previousEditorState.getCurrentContent());
+      const currentContent = convertToRaw(editorState.getCurrentContent());
+
+      const changes = diff(previousContent, currentContent);
+
+      if ( changes ) {
+        firebase.push(`/projects/${projectKey}/updates/`, {author: auth.uid, time: Date.now(), changes: JSON.stringify(changes)}).then((input) => {
+            firebase.set(`/projects/${projectKey}/latestUpdate`, input.key);
+        });
+      }
+
       firebase.set(`/projects/${projectKey}/content`, JSON.stringify(convertToRaw(editorState.getCurrentContent())));
       firebase.set(`/projects/${projectKey}/selections/${auth.uid}`, toJS(selectionState));
+
+      this.setState({
+        editorState: editorState,
+      })
+
     };
+
+    this.handleKeyCommand = this.handleKeyCommand.bind(this);
   };
 
+  handleKeyCommand(command) {
+      const newState = RichUtils.handleKeyCommand(this.state.editorState, command);
+      if (newState) {
+        this.onChange(newState);
+        return 'handled';
+      }
+      return 'not-handled';
+    };
+  
   render() {
     return (
       <div onClick={this.focus}>
-        {this.props.projects ? 
+        {this.props.activeProject ? 
               <Editor 
               blockStyleFn={myBlockStyleFn} 
               editorState={this.state.editorState} 
               onChange={this.onChange} 
-              ref='editor' />
+              handleKeyCommand={this.handleKeyCommand}
+              ref='editor' 
+              readOnly={this.props.online ? false : true}/>
            : <div></div>}
       </div>
     );
@@ -70,33 +116,59 @@ class MyEditor extends React.Component {
 
   componentWillUpdate(nextProps, nextState) {
       if (nextProps !== this.props) {
-          const { projectKey, projects, auth } = nextProps;
-          
-          if ( projects ) {
-                    
-              const projectList = _.transform(projects, (result, value, key) => {
-                        result.push({ key: key, name: value.name, owner: value.owner, selections: value.selections, content: value.content })
-                    }, []);
+          const { projectKey, activeProject, auth, firebase, profile } = nextProps;
+          const { editorState, rehydrate, latestUpdate } = this.state;
+          const userProjectData = _.find(profile.projects, (value, key) => {
+                return (key === projectKey);
+          });
 
-              const activeProject = _.find(projectList, {key: projectKey});
-              if (activeProject) {
-                const newContentState = convertFromRaw(JSON.parse(activeProject.content));
-                const newEditorState = EditorState.push(this.state.editorState, newContentState);
+          console.log(rehydrate)
 
-                const selection = this.selectionPicker(activeProject.selections, auth.uid);
+          if (rehydrate && activeProject) {
+              const previousContent = JSON.parse(activeProject.content);
+              const newEditorState = EditorState.push(editorState, convertFromRaw(previousContent))
+              console.log(convertToRaw(newEditorState.getCurrentContent()));
 
-                const previousSelectionState = newEditorState.getSelection();
-                const selectionState = previousSelectionState.merge(selection);
+              this.setState({
+                editorState: newEditorState,
+                rehydrate: false,
+              })
 
-                const editorStateWithSelection = EditorState.acceptSelection(newEditorState, selectionState);
+          } 
 
-                
-                this.setState({
-                  editorState: editorStateWithSelection,
-                  activeProject: activeProject,
+          if(activeProject && !rehydrate) {
+            const { updates } = activeProject;
+            const previousSelectionState = editorState.getSelection();
+            const selection = this.selectionPicker(activeProject.selections, auth.uid);
+            const selectionState = previousSelectionState.merge(selection);
+
+            var updatedEditorState = this.state.editorState; 
+
+            _.map(updates, (value, key) => {
+              const isApplied = _.findKey(userProjectData.appliedUpdates, (v, k) => {
+                return (key === k);
+              });              
+              if(!isApplied) {
+                var previousContent = convertToRaw(this.state.editorState.getCurrentContent());
+                const changes = JSON.parse(value.changes);
+
+                _.forEach(changes, (change) => {
+                  diff.applyChange(previousContent, true, change);
                 });
-              }                
+                                  
+                updatedEditorState = EditorState.push(this.state.editorState, convertFromRaw(previousContent));
+
+                firebase.set(`users/${auth.uid}/projects/${projectKey}/appliedUpdates/${key}`, true);
+              } 
+            });
+
+            const editorStateWithSelection = EditorState.acceptSelection(updatedEditorState, selectionState);
+            
+            this.setState({
+              editorState: editorStateWithSelection,
+            })
           }
+          
       } 
   };
 }

@@ -168,3 +168,21 @@
 .card-container > .ant-tabs-card > .ant-tabs-bar .ant-tabs-tab-active {
   border-color: #ececec;
 }
+
+/* Context Menu */
+.context-menu {
+  width: auto;
+}
+
+.context-menu-item {
+  margin: 0;
+  display: block;
+  padding: 10px 25px;
+  background: #fff;
+  transition-duration: 0.25s;
+}
+
+.context-menu-item:hover {
+  background: #3EB8FF;
+  color: #fff;
+}
